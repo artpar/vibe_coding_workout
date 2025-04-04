@@ -215,13 +215,42 @@ class WorkoutDashboard:
             "Don't wish for it, work for it."
         ]
 
-    def setup_sidebar_filters(self):
-        """Setup sidebar filters and apply them to the data"""
-        st.sidebar.image("https://img.icons8.com/fluency/96/000000/gym.png", width=80)
-        st.sidebar.title("Vibe Workout Tracker")
-        st.sidebar.markdown("---")
+    def render_sidebar(self):
+        """Render the sidebar with filters and controls"""
+        st.sidebar.title("Vibe Workout Tracker 💪")
         
-        st.sidebar.header("📊 Filters")
+        # Add file upload section
+        st.sidebar.header("Upload Workout Data")
+        with st.sidebar.expander("Upload New Data", expanded=False):
+            uploaded_file = st.file_uploader("Upload workout data (CSV)", type=['csv'])
+            
+            if uploaded_file is not None:
+                if st.button("Process Uploaded File"):
+                    with st.spinner("Processing uploaded file..."):
+                        # Save the file and get the path
+                        file_path, message = self.data_processor.save_uploaded_file(uploaded_file)
+                        
+                        if file_path:
+                            st.success(f"File uploaded successfully! {message}")
+                            st.info("Refreshing data... please wait.")
+                            # Reload data to include the new file
+                            self.combined_df, self.hevy_df, self.strong_df, self.jefit_df = self.data_processor.load_data()
+                            # Update the analyzer with new data
+                            self.analyzer = WorkoutAnalyzer(self.combined_df)
+                            # Update filtered dataframe
+                            self.filtered_df = self.combined_df.copy()
+                            st.success("Data refreshed with new uploads!")
+                        else:
+                            st.error(f"Error processing file: {message}")
+            
+            st.markdown("""
+            ### Supported Formats
+            - **Hevy** export CSV
+            - **Strong** export CSV
+            - **Jefit** export CSV
+            
+            The system will automatically detect the format based on the file structure.
+            """)
 
         # Date range filter with better UI
         min_date = self.combined_df['date'].min().date()
@@ -618,7 +647,7 @@ class WorkoutDashboard:
         load_css()
         
         # Setup sidebar filters
-        self.setup_sidebar_filters()
+        self.render_sidebar()
 
         # Display overview statistics at the top (always visible)
         self.display_overview_statistics()
