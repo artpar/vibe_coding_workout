@@ -163,16 +163,43 @@ class WorkoutDashboard:
         # Setup sidebar filters
         self.setup_sidebar_filters()
 
-        # Display all sections
+        # Display overview statistics at the top (always visible)
         self.display_overview_statistics()
-        self.display_calendar_view()
-        self.display_weekly_blocks()
-        self.display_workout_frequency()
-        self.display_exercise_distribution()
-        self.display_exercise_analysis()
-        self.display_volume_analysis()
-        self.display_detailed_exercise_data()
-        self.display_app_comparison()
+        
+        # Create tabs for different visualization groups
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "Calendar & Activity Blocks", 
+            "Workout Frequency", 
+            "Exercise Analysis",
+            "Volume Analysis",
+            "Detailed Data"
+        ])
+        
+        # Tab 1: Calendar & Activity Blocks
+        with tab1:
+            # Calendar view
+            self.display_calendar_view()
+            
+            # Weekly blocks
+            self.display_weekly_blocks()
+        
+        # Tab 2: Workout Frequency
+        with tab2:
+            self.display_workout_frequency()
+            self.display_exercise_distribution()
+        
+        # Tab 3: Exercise Analysis
+        with tab3:
+            self.display_exercise_analysis()
+        
+        # Tab 4: Volume Analysis
+        with tab4:
+            self.display_volume_analysis()
+        
+        # Tab 5: Detailed Data
+        with tab5:
+            self.display_detailed_exercise_data()
+            self.display_app_comparison()
 
 
 # Run the dashboard
