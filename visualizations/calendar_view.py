@@ -13,6 +13,19 @@ class CalendarVisualizer:
         """Create a GitHub-style calendar heatmap"""
         if year is None:
             year = datetime.now().year
+            
+        # Check if workout_dates is empty
+        if len(workout_dates) == 0:
+            # Create a figure with a message when no data is available
+            fig, ax = plt.subplots(figsize=(20, 8))
+            ax.text(0.5, 0.5, "No workout data available for the selected filters", 
+                   horizontalalignment='center', verticalalignment='center', 
+                   transform=ax.transAxes, fontsize=14)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            for spine in ax.spines.values():
+                spine.set_visible(False)
+            return fig
 
         # Create a dictionary to store workout counts per day
         workout_counts = {}

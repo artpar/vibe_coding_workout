@@ -1,5 +1,6 @@
 import plotly.express as px
 import plotly.graph_objects as go
+import pandas as pd
 
 
 class ProgressionVisualizer:
@@ -29,8 +30,12 @@ class ProgressionVisualizer:
     def create_exercise_distribution_chart(self, df):
         """Create exercise distribution chart"""
         exercise_counts = df['exercise'].value_counts().head(10)
-        fig = px.bar(x=exercise_counts.index, y=exercise_counts.values, title='Top 10 Most Performed Exercises',
-                     labels={'x': 'Exercise', 'y': 'Number of Sets'})
+        chart_df = pd.DataFrame({
+            'Exercise': exercise_counts.index,
+            'Count': exercise_counts.values
+        })
+        fig = px.bar(chart_df, x='Exercise', y='Count', title='Top 10 Most Performed Exercises',
+                     labels={'Exercise': 'Exercise', 'Count': 'Number of Sets'})
         return fig
 
     def create_exercise_progression_chart(self, df, selected_exercise):

@@ -8,6 +8,19 @@ class WorkoutBlocksVisualizer:
 
     def create_weekly_blocks(self, workout_data, min_sessions=3):
         """Create weekly blocks visualization"""
+        # Check if workout_data is empty
+        if workout_data.empty:
+            # Create a figure with a message when no data is available
+            fig, ax = plt.subplots(figsize=(24, 12))
+            ax.text(0.5, 0.5, "No workout data available for the selected filters", 
+                   horizontalalignment='center', verticalalignment='center', 
+                   transform=ax.transAxes, fontsize=14)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            for spine in ax.spines.values():
+                spine.set_visible(False)
+            return fig
+            
         # Get min and max dates
         min_date = workout_data['date'].min()
         max_date = workout_data['date'].max()
@@ -142,9 +155,45 @@ class WorkoutBlocksVisualizer:
 
     def create_github_style_blocks(self, workout_data):
         """Create GitHub-style weekly blocks with hover info"""
+        # Check if workout_data is empty
+        if workout_data.empty:
+            # Create an empty Plotly figure with a message
+            fig = go.Figure()
+            fig.add_annotation(
+                text="No workout data available for the selected filters",
+                xref="paper", yref="paper",
+                x=0.5, y=0.5,
+                showarrow=False,
+                font=dict(size=14)
+            )
+            fig.update_layout(
+                height=300,
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)
+            )
+            return fig
+            
         # Get min and max dates
         min_date = workout_data['date'].min()
         max_date = workout_data['date'].max()
+        
+        # Check if min_date or max_date are NaT (Not a Time) values
+        if pd.isna(min_date) or pd.isna(max_date):
+            # Create an empty Plotly figure with a message
+            fig = go.Figure()
+            fig.add_annotation(
+                text="No valid dates found in the selected data",
+                xref="paper", yref="paper",
+                x=0.5, y=0.5,
+                showarrow=False,
+                font=dict(size=14)
+            )
+            fig.update_layout(
+                height=300,
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)
+            )
+            return fig
 
         # Adjust dates to start from January 1st and end on December 31st of the respective years
         min_date = pd.Timestamp(year=min_date.year, month=1, day=1)
